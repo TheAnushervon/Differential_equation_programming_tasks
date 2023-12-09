@@ -15,6 +15,7 @@ vector<double> k1_i;
 vector<double> k2_i;
 vector<double> euler_le_xi;
 vector<double> ni_val; 
+vector<double> impr_euler_le_xi; 
 
 double h;
 double pi = 2 * acos(0.0);
@@ -93,14 +94,18 @@ void calc_k2(vector<double> xi_val, vector<double> yi_val, int n)
 // problem with k1[i] and k2[i] - out of range
 void calc_iEuler_yi(int n)
 {
-    calc_k1(xi_val, yi_val, n);
-    calc_k2(xi_val, yi_val, n);
-    ieuler_yi.push_back(yi_val[0] + (h / 2) * (k1_i[0] + k2_i[0]));
+    yi_calc(n); 
     double result;
+    double yi = 0 ; 
+    calc_k1(xi_val, yi_val, n) ; 
+    calc_k2(xi_val, yi_val, n) ; 
+    double k1; 
+    double k2 ; 
+    ieuler_yi.push_back(yi_val[0]); 
     for (int i = 0; i < n - 1; i++)
     {
-        result = ieuler_yi[i] + (h / 2) * (k1_i[i] * k2_i[i]);
-        ieuler_yi.push_back(result);
+        yi = ieuler_yi[i] + (h / 2) * (k1_i[i]+k2_i[i]);
+        ieuler_yi.push_back(yi);
     }
 }
 void print_Euler_yi(int n)
@@ -129,10 +134,26 @@ void calc_Euler_LE_xi(int n)
         euler_le_xi.push_back(abs(euler_yi[i]- yi_val[i]));
     }
 }
+void calc_imprEuler_LE_xi(int n)
+{
+    yi_calc(n);
+    calc_iEuler_yi(n) ; 
+    vector<double> check ;  
+    for (int i = 0; i < n; i++)
+    {  
+        impr_euler_le_xi.push_back(abs(ieuler_yi[i]- yi_val[i]));
+    }
+}
 void print_Euler_LE_xi(int n) { 
         cout << "Euler_LE(xi)=\n"; 
     for (int i = 0 ;i < n ; i++) {
         cout << euler_le_xi[i] << " " ; 
+    }
+}
+void print_imprEuler_LE_xi(int n) { 
+        cout << "iEuler_LE(xi)=\n"; 
+    for (int i = 0 ;i < n ; i++) {
+        cout << impr_euler_le_xi[i] << " " ; 
     }
 }
 void variant_first(int n)
@@ -180,6 +201,12 @@ void variant_fifth(int n)
     calc_Euler_LE_xi(n);
     print_Euler_LE_xi(n);
 }
+void variant_six(int n) { 
+    xi_calc(n); 
+    print_xi(n);
+    calc_imprEuler_LE_xi( n) ; 
+    print_imprEuler_LE_xi(n) ; 
+}
 void variant_eighth(int n, int n1, int n2) { 
     calc_ni(n, n1, n2);
     print_ni(n) ; 
@@ -210,6 +237,8 @@ int main()
     case 5:
         variant_fifth(n);
         break;
+    case 6: 
+        variant_six(n) ; 
     case 8: 
         variant_eighth(n, n1, n2) ; // not finished
     }
