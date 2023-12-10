@@ -130,7 +130,7 @@ void print_iEuler_yi(int n)
 // calculate local error for euler method 
 void calc_Euler_LE_xi(int n)
 {
-    //xi_calc(n) ; 
+    xi_calc(n) ; 
     yi_calc(n);
     // euler for yi
     calc_Euler_yi(n) ; 
@@ -143,11 +143,12 @@ void calc_Euler_LE_xi(int n)
 // calculating error for improved euler method
 void calc_imprEuler_LE_xi(int n)
 {
-    yi_calc(n);
+
     calc_iEuler_yi(n) ; 
     vector<double> check ;  
     for (int i = 0; i < n; i++)
     {  
+        // probably mistake in function ieuler_yi
         impr_euler_le_xi.push_back(abs(ieuler_yi[i]- yi_val[i]));
     }
 }
@@ -240,21 +241,27 @@ void variant_nine(int n, int n1, int n2) {
     calc_ni(n, n1, n2);
     print_ni(n) ; 
     cout << endl ;
-    euler_global_error.resize(n+1) ;  
+    euler_improved_global_error.resize(n+1) ;  
     for (int i = 0 ;i < n+1; i++) { 
         // from this part change 
-        calc_Euler_LE_xi(ni_val[i]); 
+        xi_calc(ni_val[i]); 
+        calc_imprEuler_LE_xi(ni_val[i]); 
+        
        
-        euler_improved_global_error[i] = (*max_element(euler_le_xi.begin(), euler_le_xi.end())); 
+        euler_improved_global_error[i] = (*max_element(impr_euler_le_xi.begin(), impr_euler_le_xi.end())); 
         euler_le_xi.clear(); 
         xi_val.clear(); 
         yi_val.clear(); 
-        euler_yi.clear(); 
+        k1_i.clear(); 
+        k2_i.clear(); 
+        //euler_yi.clear();
+        impr_euler_le_xi.clear();  
+        ieuler_yi.clear(); 
         xi_val.push_back(0) ; 
         yi_val.push_back(0) ; 
         // till this part change 
     }
-    cout << "Euler_GE(n)=\n"; 
+    cout << "iEuler_GE(n)=\n"; 
     for (int i = 0 ;i < euler_improved_global_error.size(); i++) { 
         cout<< fixed<< setprecision(5) << euler_improved_global_error[i] << " " ; 
     }
